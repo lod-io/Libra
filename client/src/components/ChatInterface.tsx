@@ -22,6 +22,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const isActiveRef = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messageCountRef = useRef<{ [key: string]: number }>({});
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -39,6 +40,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     currentMessages: Message[]
   ) => {
     try {
+      const currentCount = messageCountRef.current[currentModel] || 0;
+      console.log("Current count for", currentModel, ":", currentCount);
+
+      if (currentCount >= 10) {
+        console.log("Reached message limit for", currentModel);
+        setIsConversationActive(false);
+        isActiveRef.current = false;
+        return null;
+      }
+
       setIsLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 5000));
       const response = await getLLMResponse(currentMessages, currentModel);
@@ -50,6 +61,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       const updatedMessages = [...currentMessages, newMessage];
       setMessages(updatedMessages);
+
+      const newCount = currentCount + 1;
+      messageCountRef.current = {
+        ...messageCountRef.current,
+        [currentModel]: newCount,
+      };
+
+      console.log("Updated counts:", messageCountRef.current);
+
       return updatedMessages;
     } catch (error) {
       console.error("Error generating response:", error);
@@ -70,6 +90,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setIsConversationActive(true);
     isActiveRef.current = true;
     setMessages([initialMessage]);
+
+    messageCountRef.current = {
+      [model1]: 1,
+      [model2]: 0,
+    };
+    console.log("Initial message counts:", messageCountRef.current);
 
     let currentModel = model2;
     let currentMessages = [initialMessage];
@@ -109,7 +135,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           onClick={startConversation}
           disabled={!canStartConversation}
         >
-          {isLoading ? "Loading..." : "Start Conversation"}
+          {isLoading ? "Conversing..." : "Start Conversation"}
         </Button>
         <Button
           variant="contained"

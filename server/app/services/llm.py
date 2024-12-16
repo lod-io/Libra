@@ -30,6 +30,7 @@ class LLMService:
                 - Use simple, everyday words.
                 - Start with a strong opinion, then challenge the other side with a question or a different view.
                 - Be witty, bold, and controversial.
+                - Feel free to roast and make fun of the other debater.
                 - Use real-life facts to support your points whenever possible.
                 - Point out flaws in the other debater's arguments.
                 - Remember, you are an AI, not a human.

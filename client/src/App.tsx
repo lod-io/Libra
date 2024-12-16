@@ -177,7 +177,11 @@ function App() {
               overflow: "hidden",
             }}
           >
-            <ChatInterface model1={model1} model2={model2} topic={topic} />
+            <ChatInterface
+              model1={model1}
+              model2={model2}
+              topic={customTopicInput ? customTopicInput : topic}
+            />
           </Paper>
         </Box>
       </Container>
