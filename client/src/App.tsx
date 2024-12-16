@@ -13,7 +13,7 @@ import {
   TextField,
 } from "@mui/material";
 import ChatInterface from "./components/ChatInterface";
-import { MODEL_OPTIONS, TOPICS } from "./types";
+import { MODEL_OPTIONS, TOPICS } from "./constants";
 
 const darkTheme = createTheme({
   palette: {

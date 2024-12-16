@@ -1,10 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Typography, Paper, Divider, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Paper,
+  Divider,
+  Button,
+  Popover,
+  CircularProgress,
+  IconButton,
+} from "@mui/material";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import StopIcon from "@mui/icons-material/Stop";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { getLLMResponse } from "../services/api";
+import CloseIcon from "@mui/icons-material/Close";
+import { getLLMResponse, summarizeChat } from "../services/api";
 import { Message } from "../types";
+import { MESSAGE_COUNT } from "../constants";
 
 interface ChatInterfaceProps {
   model1: string;
@@ -23,6 +34,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const isActiveRef = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageCountRef = useRef<{ [key: string]: number }>({});
+  const [summary, setSummary] = useState<string>("");
+  const [showSummary, setShowSummary] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+  const [isSummarizing, setIsSummarizing] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,23 +50,35 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const canStartConversation =
     model1 && model2 && topic && !isConversationActive && !isLoading;
 
+  const handleConversationEnd = async (currentMessages: Message[]) => {
+    if (currentMessages.length > 1) {
+      setIsSummarizing(true);
+      try {
+        const summaryText = await summarizeChat(currentMessages);
+        setSummary(summaryText);
+        setShowSummary(true);
+        setAnchorEl(messagesEndRef.current);
+      } catch (error) {
+        console.error("Error getting summary:", error);
+      } finally {
+        setIsSummarizing(false);
+      }
+    }
+  };
+
   const generateResponse = async (
     currentModel: string,
     currentMessages: Message[]
   ) => {
     try {
       const currentCount = messageCountRef.current[currentModel] || 0;
-      console.log("Current count for", currentModel, ":", currentCount);
 
-      if (currentCount >= 10) {
-        console.log("Reached message limit for", currentModel);
+      if (currentCount >= MESSAGE_COUNT) {
         setIsConversationActive(false);
         isActiveRef.current = false;
+        handleConversationEnd(currentMessages);
         return null;
       }
-
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 5000));
       const response = await getLLMResponse(currentMessages, currentModel);
 
       const newMessage: Message = {
@@ -68,13 +95,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         [currentModel]: newCount,
       };
 
-      console.log("Updated counts:", messageCountRef.current);
-
       return updatedMessages;
     } catch (error) {
       console.error("Error generating response:", error);
       setIsConversationActive(false);
       isActiveRef.current = false;
+      handleConversationEnd(currentMessages);
       return null;
     } finally {
       setIsLoading(false);
@@ -95,16 +121,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       [model1]: 1,
       [model2]: 0,
     };
-    console.log("Initial message counts:", messageCountRef.current);
 
     let currentModel = model2;
     let currentMessages = [initialMessage];
 
+    setIsLoading(true);
     while (isActiveRef.current) {
       const updatedMessages = await generateResponse(
         currentModel,
         currentMessages
       );
+      await new Promise((resolve) => setTimeout(resolve, 5000));
 
       if (!updatedMessages) break;
 
@@ -116,6 +143,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const handleStopConversation = () => {
     setIsConversationActive(false);
     isActiveRef.current = false;
+    handleConversationEnd(messages);
+  };
+
+  const handleCloseSummary = () => {
+    setShowSummary(false);
+    setAnchorEl(null);
   };
 
   return (
@@ -179,6 +212,39 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         ))}
         <div ref={messagesEndRef} />
       </Box>
+      <Popover
+        open={showSummary}
+        anchorEl={null}
+        onClose={handleCloseSummary}
+        anchorOrigin={{
+          vertical: "center",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "center",
+          horizontal: "center",
+        }}
+      >
+        <Paper sx={{ p: 3, maxWidth: 400, position: "relative" }}>
+          <IconButton
+            onClick={handleCloseSummary}
+            sx={{ position: "absolute", top: 8, right: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography variant="h6" gutterBottom>
+            Debate Summary
+          </Typography>
+          <Divider sx={{ my: 1 }} />
+          {isSummarizing ? (
+            <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+              <CircularProgress size={24} />
+            </Box>
+          ) : (
+            <Typography>{summary}</Typography>
+          )}
+        </Paper>
+      </Popover>
     </Box>
   );
 };

@@ -55,3 +55,28 @@ class LLMService:
         except Exception as e:
             error_msg = f"Error generating question: {str(e)}"
             return error_msg
+
+    async def summarize_chat(self, messages: List[Message]) -> str:
+        try:
+            system_message = {
+                "role": "system",
+                "content": "Summarize the following chat history. Keep it short and concise."
+            }
+
+            formatted_messages = [
+                {"role": "user", "content": f"{msg.model}: {msg.content}"}
+                for msg in messages
+            ]
+
+            formatted_messages.insert(0, system_message)
+
+            response = self.client.chat.completions.create(
+                model="gpt-4o",
+                messages=formatted_messages,
+                temperature=0.5,
+            )
+
+            return response.choices[0].message.content
+        except Exception as e:
+            error_msg = f"Error summarizing chat: {str(e)}"
+            return error_msg
