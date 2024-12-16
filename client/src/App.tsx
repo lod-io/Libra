@@ -10,6 +10,7 @@ import {
   MenuItem,
   Paper,
   Typography,
+  TextField,
 } from "@mui/material";
 import ChatInterface from "./components/ChatInterface";
 import { MODEL_OPTIONS, TOPICS } from "./types";
@@ -24,6 +25,7 @@ function App() {
   const [model1, setModel1] = useState("");
   const [model2, setModel2] = useState("");
   const [topic, setTopic] = useState("");
+  const [customTopicInput, setCustomTopicInput] = useState("");
 
   useEffect(() => {
     const randomIndex1 = Math.floor(Math.random() * MODEL_OPTIONS.length);
@@ -53,6 +55,22 @@ function App() {
     }
   };
 
+  const handleTopicChange = (value: string) => {
+    setTopic(value);
+  };
+
+  const handleCustomTopicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomTopicInput(e.target.value);
+  };
+
+  const handleCustomTopicSubmit = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter" && customTopicInput.trim()) {
+      TOPICS.push(customTopicInput.trim());
+      setTopic(customTopicInput.trim());
+      setCustomTopicInput("");
+    }
+  };
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -78,59 +96,75 @@ function App() {
             Libra
           </Typography>
 
-          <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-            <FormControl fullWidth>
-              <InputLabel>Debater 1</InputLabel>
-              <Select
-                value={model1}
-                label="Debater 1"
-                onChange={(e) => handleModel1Change(e.target.value)}
-              >
-                {MODEL_OPTIONS.map((model) => (
-                  <MenuItem
-                    key={model.value}
-                    value={model.value}
-                    disabled={model.value === model2}
-                  >
-                    {model.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+              <FormControl fullWidth>
+                <InputLabel>Topic</InputLabel>
+                <Select
+                  value={topic}
+                  label="Topic"
+                  onChange={(e) => handleTopicChange(e.target.value)}
+                >
+                  <MenuItem value="custom">Custom</MenuItem>
+                  {TOPICS.map((t) => (
+                    <MenuItem key={t} value={t}>
+                      {t}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-            <FormControl fullWidth>
-              <InputLabel>Topic</InputLabel>
-              <Select
-                value={topic}
-                label="Topic"
-                onChange={(e) => setTopic(e.target.value)}
-              >
-                {TOPICS.map((t) => (
-                  <MenuItem key={t} value={t}>
-                    {t}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+              {topic === "custom" && (
+                <TextField
+                  fullWidth
+                  label="Custom Topic"
+                  variant="outlined"
+                  value={customTopicInput}
+                  onChange={handleCustomTopicChange}
+                  onKeyDown={handleCustomTopicSubmit}
+                  placeholder="Enter custom topic"
+                />
+              )}
+            </Box>
+            <Box sx={{ display: "flex", flexDirection: "row", gap: 2, mb: 2 }}>
+              <FormControl fullWidth>
+                <InputLabel>Team Blue</InputLabel>
+                <Select
+                  value={model1}
+                  label="Team Blue"
+                  onChange={(e) => handleModel1Change(e.target.value)}
+                >
+                  {MODEL_OPTIONS.map((model) => (
+                    <MenuItem
+                      key={model.value}
+                      value={model.value}
+                      disabled={model.value === model2}
+                    >
+                      {model.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-            <FormControl fullWidth>
-              <InputLabel>Debater 2</InputLabel>
-              <Select
-                value={model2}
-                label="Debater 2"
-                onChange={(e) => handleModel2Change(e.target.value)}
-              >
-                {MODEL_OPTIONS.map((model) => (
-                  <MenuItem
-                    key={model.value}
-                    value={model.value}
-                    disabled={model.value === model1}
-                  >
-                    {model.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+              <FormControl fullWidth>
+                <InputLabel>Team Purple</InputLabel>
+                <Select
+                  value={model2}
+                  label="Team Purple"
+                  onChange={(e) => handleModel2Change(e.target.value)}
+                >
+                  {MODEL_OPTIONS.map((model) => (
+                    <MenuItem
+                      key={model.value}
+                      value={model.value}
+                      disabled={model.value === model1}
+                    >
+                      {model.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
           </Box>
 
           <Paper
