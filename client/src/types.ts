@@ -21,3 +21,8 @@ export interface ModelOption {
   name: string;
   value: string;
 }
+
+export interface Topic {
+  kind: string;
+  content: string;
+}

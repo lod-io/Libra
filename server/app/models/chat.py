@@ -15,3 +15,8 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     content: str
+
+
+class SummaryRequest(BaseModel):
+    kind: str
+    messages: List[Message]

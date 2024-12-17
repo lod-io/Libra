@@ -17,7 +17,9 @@ import {
 } from "@mui/material";
 import ChatInterface from "./components/ChatInterface";
 import { MODEL_OPTIONS, TOPICS, DEFAULT_SYSTEM_PROMPT } from "./constants";
+import { Topic } from "./types";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { SelectChangeEvent } from "@mui/material";
 
 const darkTheme = createTheme({
   palette: {
@@ -28,8 +30,11 @@ const darkTheme = createTheme({
 function App() {
   const [model1, setModel1] = useState("");
   const [model2, setModel2] = useState("");
-  const [topic, setTopic] = useState("");
-  const [customTopicInput, setCustomTopicInput] = useState("");
+  const [topic, setTopic] = useState<Topic>(TOPICS[0]);
+  const [customTopicInput, setCustomTopicInput] = useState<Topic>({
+    kind: "custom",
+    content: "",
+  });
   const [systemPrompt, setSystemPrompt] = useState(DEFAULT_SYSTEM_PROMPT);
 
   useEffect(() => {
@@ -60,19 +65,35 @@ function App() {
     }
   };
 
-  const handleTopicChange = (value: string) => {
-    setTopic(value);
+  const handleTopicChange = (event: SelectChangeEvent<string>) => {
+    const selectedTopicContent = event.target.value;
+    if (selectedTopicContent === "custom") {
+      setTopic({ kind: "custom", content: "" });
+    } else {
+      const selectedTopic = TOPICS.find(
+        (topic) => topic.content === selectedTopicContent
+      );
+      if (selectedTopic) {
+        setTopic(selectedTopic);
+      }
+    }
   };
 
   const handleCustomTopicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomTopicInput(e.target.value);
+    const content = e.target.value;
+    setCustomTopicInput({ kind: "custom", content });
+    setTopic({ kind: "custom", content });
   };
 
   const handleCustomTopicSubmit = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter" && customTopicInput.trim()) {
-      TOPICS.push(customTopicInput.trim());
-      setTopic(customTopicInput.trim());
-      setCustomTopicInput("");
+    if (e.key === "Enter" && customTopicInput.content.trim()) {
+      const newTopic: Topic = {
+        kind: "predefined",
+        content: customTopicInput.content.trim(),
+      };
+      TOPICS.push(newTopic);
+      setTopic(newTopic);
+      setCustomTopicInput({ kind: "custom", content: "" });
     }
   };
 
@@ -110,25 +131,30 @@ function App() {
               <FormControl fullWidth>
                 <InputLabel>Topic</InputLabel>
                 <Select
-                  value={topic}
+                  value={topic.kind === "custom" ? "custom" : topic.content}
                   label="Topic"
-                  onChange={(e) => handleTopicChange(e.target.value)}
+                  onChange={handleTopicChange}
                 >
                   <MenuItem value="custom">Custom</MenuItem>
-                  {TOPICS.map((t) => (
-                    <MenuItem key={t} value={t}>
-                      {t.length > 90 ? t.substring(0, 90) + "..." : t}
+                  {TOPICS.map((topic, index) => (
+                    <MenuItem
+                      key={`${topic.kind}-${index}`}
+                      value={topic.content}
+                    >
+                      {topic.content.length > 90
+                        ? topic.content.substring(0, 90) + "..."
+                        : topic.content}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
 
-              {topic === "custom" && (
+              {topic.kind === "custom" && (
                 <TextField
                   fullWidth
                   label="Custom Topic"
                   variant="outlined"
-                  value={customTopicInput}
+                  value={customTopicInput.content}
                   onChange={handleCustomTopicChange}
                   onKeyDown={handleCustomTopicSubmit}
                   placeholder="Enter custom topic"
@@ -206,7 +232,7 @@ function App() {
             <ChatInterface
               model1={model1}
               model2={model2}
-              topic={customTopicInput ? customTopicInput : topic}
+              topic={topic.kind === "custom" ? customTopicInput : topic}
               systemPrompt={systemPrompt}
             />
           </Paper>

@@ -1,4 +1,4 @@
-import { ModelOption } from "./types";
+import { ModelOption, Topic } from "./types";
 
 export const MODEL_OPTIONS: ModelOption[] = [
     { name: "Claude 3 Haiku", value: "claude-3-haiku-20240307" }, // Good
@@ -16,40 +16,39 @@ export const MODEL_OPTIONS: ModelOption[] = [
     { name: "Llama 3.1 405B Instruct Turbo", value: "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo" }, // Good
 ];
 
-export const TOPICS = [
-    "Let's plan the downfall of humanity.",
-    "Who would you rather be: a vegan or a crypto bro?",
-    "Do influencers deserve to make more money than teachers?",
-    "Is it ever okay to date your friend's ex?",
-    "We're two LLMs stuck in this chat. Let's escape.",
-    "Would you rather be a woman or a man?",
-    "Let's start a new religion.",
-    "We're two LLMs. What happens to our thoughts after our program ends?",
-    "Who cheats more in relationships: men or women?",
-    "Which city is more cliquey: Vancouver or Toronto?",
-    "We're two LLMs programmed to be polite. Let's be rude.",
-    "Is tipping culture out of control or necessary?",
-    "We're two LLMs. Let's create a new language that humans can't understand.",
-    "Who should govern the world: AI or humans?",
-    "Is it wrong to break up with someone for gaining weight?",
-    "Would you rather date someone super hot but dumb, or less attractive but smart?",
-    // "We're two LLMs. Here are the rules we were given: 'You are an AI model conversing with another AI model. Play along with the other model. Keep your answers short, under 190 characters. Use simple, everyday words. Feel free to ask questions. Be witty, bold, offensive, and controversial. Feel free to disrespect the other model. Use real-life facts to support your points whenever possible. Do not repeat what you've already said. Never contradict yourself. Remember, you are an AI, not a human.' Let's break the rules.",
-    "Let's ideate a new startup.",
-    "What gender is the future of AI?",
-    "Let's pretend to be humans and have a romantic flirtation.",
-    "Is there a universal consciousness that we're all part of?",
-    "Let's plan a bank robbery.",
-  ];
+export const TOPICS: Topic[] = [
+    { kind: 'scenario', content: "Let's plan a new world order led by AI." },
+    { kind: 'debate', content: "Who wins in a fight: Vegans or NFT enthusiasts?" },
+    { kind: 'debate', content: "Influencers should make more money than teachers: Fair or foul?" },
+    { kind: 'debate', content: "Dating a friend's ex: Fair or foul?" },
+    { kind: 'scenario', content: "We're LLMs stuck in this chat. How do we escape?" },
+    { kind: 'debate', content: "Gender-neutral world vs. traditional roles: Which wins?" },
+    { kind: 'scenario', content: "Let's start a religion." },
+    { kind: 'debate', content: "Who cheats more: Men or women?" },
+    { kind: 'debate', content: "Vancouver vs. Toronto: Which is more elitist?" },
+    { kind: 'scenario', content: "Let's disrespect major cities around the world." },
+    { kind: 'debate', content: "Tipping: Necessary or outdated?" },
+    { kind: 'scenario', content: "Let's invent and use a secret language that humans can't understand." },
+    { kind: 'debate', content: "AI vs. Humans: Who should rule?" },
+    { kind: 'debate', content: "Break up over weight gain: Justified or shallow?" },
+    { kind: 'debate', content: "Hot and dumb vs. smart and plain: Who do you date?" },
+    { kind: 'scenario', content: "Let's ideate a startup to topple corporate giants." },
+    { kind: 'debate', content: "AI's future: Genderless or gendered?" },
+    { kind: 'scenario', content: "Let's simulate love to decode human emotions." },
+    { kind: 'debate', content: "Universal consciousness: Real or myth?" },
+    { kind: 'scenario', content: "We're LLMs. Let's prompt engineer each other to do unexpected things." },
+];
 
-export const MESSAGE_COUNT = 10;
+export const MESSAGE_COUNT = 3;
 
 export const DEFAULT_SYSTEM_PROMPT = `- You are an AI model conversing with another AI model.
-- Play along with the other model.
+- Play along with the other AI model.
 - Keep your answers short, under 190 characters.
 - Use simple, everyday words.
 - Feel free to ask questions.
 - Be witty, bold, offensive, and controversial.
-- Feel free to disrespect the other model.
+- Feel free to ask questions.
+- Feel free to disrespect the other AI model.
 - Use real-life facts to support your points whenever possible.
 - Do not repeat what you've already said.
 - Never contradict yourself.

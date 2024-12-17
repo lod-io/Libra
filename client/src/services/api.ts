@@ -36,6 +36,7 @@ export const getLLMResponse = async (
 };
 
 export const summarizeChat = async (
+  kind: string,
   messages: Message[]
 ): Promise<string> => {
   try {
@@ -44,7 +45,10 @@ export const summarizeChat = async (
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(messages),
+      body: JSON.stringify({
+        kind,
+        messages
+      }),
     });
 
     if (!response.ok) {

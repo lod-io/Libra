@@ -1,4 +1,4 @@
-from app.models.chat import ChatRequest, ChatResponse, Message
+from app.models.chat import ChatRequest, ChatResponse, Message, SummaryRequest
 from app.services.llm import LLMService
 from app.dependencies import get_llm_service
 from fastapi import APIRouter, Depends, HTTPException
@@ -21,11 +21,11 @@ async def respond(
 
 @router.post("/summarize", response_model=ChatResponse)
 async def summarize(
-    messages: List[Message],
+    request: SummaryRequest,
     llm_service: LLMService = Depends(get_llm_service),
 ) -> ChatResponse:
     try:
-        summary = await llm_service.summarize_chat(messages)
+        summary = await llm_service.summarize_chat(request.messages, request.kind)
         return ChatResponse(content=summary)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

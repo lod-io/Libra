@@ -46,11 +46,20 @@ class LLMService:
             error_msg = f"Error generating question: {str(e)}"
             return error_msg
 
-    async def summarize_chat(self, messages: List[Message]) -> str:
+    async def summarize_chat(self, messages: List[Message], kind: str) -> str:
         try:
+
+            if kind == "debate":
+                content = '''
+                Summarize the debate by listing key points for each participant.
+                Separate sections for each participant's points.
+                '''
+            else:
+                content = "Summarize the following chat history. Keep it short and concise."
+
             system_message = {
                 "role": "system",
-                "content": "Summarize the following chat history. Keep it short and concise."
+                "content": content
             }
 
             formatted_messages = [

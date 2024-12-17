@@ -15,13 +15,14 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
 import CloseIcon from "@mui/icons-material/Close";
 import { getLLMResponse, summarizeChat } from "../services/api";
-import { Message } from "../types";
+import { Message, Topic } from "../types";
 import { MESSAGE_COUNT } from "../constants";
+import ReactMarkdown from "react-markdown";
 
 interface ChatInterfaceProps {
   model1: string;
   model2: string;
-  topic: string;
+  topic: Topic;
   systemPrompt: string;
 }
 
@@ -42,6 +43,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [currentModel, setCurrentModel] = useState<string>(model2);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [summaryAnchorEl, setSummaryAnchorEl] = useState<HTMLElement | null>(
+    null
+  );
+  const summaryContentRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -58,9 +64,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     if (currentMessages.length > 1) {
       setIsSummarizing(true);
       try {
-        const summaryText = await summarizeChat(currentMessages);
+        const summaryText = await summarizeChat(topic.kind, currentMessages);
         setSummary(summaryText);
         setShowSummary(true);
+        const centerElement = document.body;
+        setSummaryAnchorEl(centerElement);
       } catch (error) {
         console.error("Error getting summary:", error);
       } finally {
@@ -121,7 +129,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const startConversation = async () => {
     const initialMessage: Message = {
       model: model1,
-      content: topic,
+      content: topic.content,
     };
 
     setIsConversationActive(true);
@@ -147,7 +155,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       setCurrentModel(model);
 
       if (isActiveRef.current) {
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 2500));
       }
     }
   };
@@ -156,10 +164,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setIsConversationActive(false);
     isActiveRef.current = false;
     handleConversationEnd(messages);
-  };
-
-  const handleCloseSummary = () => {
-    setShowSummary(false);
   };
 
   const handlePauseResume = () => {
@@ -190,6 +194,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       setCurrentModel(localModel);
     }
   };
+
+  const handleCloseSummary = () => {
+    setSummaryAnchorEl(null);
+    setShowSummary(false);
+  };
+
+  useEffect(() => {
+    if (showSummary && summaryContentRef.current) {
+      summaryContentRef.current.focus();
+    }
+  }, [showSummary]);
 
   return (
     <Box
@@ -262,8 +277,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <div ref={messagesEndRef} />
       </Box>
       <Popover
-        open={showSummary}
-        anchorEl={null}
+        open={showSummary && Boolean(summaryAnchorEl)}
+        anchorEl={summaryAnchorEl}
         onClose={handleCloseSummary}
         anchorOrigin={{
           vertical: "center",
@@ -273,24 +288,50 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           vertical: "center",
           horizontal: "center",
         }}
+        slotProps={{
+          paper: {
+            elevation: 8,
+            sx: { outline: "none" },
+          },
+        }}
       >
-        <Paper sx={{ p: 3, maxWidth: 400, position: "relative" }}>
-          <IconButton
-            onClick={handleCloseSummary}
-            sx={{ position: "absolute", top: 8, right: 8 }}
+        <Paper
+          sx={{ p: 3, maxWidth: 800, position: "relative" }}
+          ref={summaryContentRef}
+          tabIndex={-1}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
           >
-            <CloseIcon />
-          </IconButton>
-          <Typography variant="h6" gutterBottom>
-            Summary
-          </Typography>
+            <Typography variant="h6">Summary</Typography>
+            <IconButton onClick={handleCloseSummary} aria-label="Close summary">
+              <CloseIcon />
+            </IconButton>
+          </Box>
           <Divider sx={{ my: 1 }} />
           {isSummarizing ? (
             <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
               <CircularProgress size={24} />
             </Box>
           ) : (
-            <Typography>{summary}</Typography>
+            <Box
+              sx={{
+                "& p": { margin: "0.5em 0" },
+                "& ul, & ol": { marginLeft: "1em" },
+                "& code": {
+                  backgroundColor: "rgba(0, 0, 0, 0.1)",
+                  padding: "0.2em 0.4em",
+                  borderRadius: "3px",
+                },
+              }}
+            >
+              <ReactMarkdown>{summary}</ReactMarkdown>
+            </Box>
           )}
         </Paper>
       </Popover>
