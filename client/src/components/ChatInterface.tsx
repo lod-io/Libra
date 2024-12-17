@@ -12,6 +12,7 @@ import {
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import StopIcon from "@mui/icons-material/Stop";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import PauseIcon from "@mui/icons-material/Pause";
 import CloseIcon from "@mui/icons-material/Close";
 import { getLLMResponse, summarizeChat } from "../services/api";
 import { Message } from "../types";
@@ -36,8 +37,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const messageCountRef = useRef<{ [key: string]: number }>({});
   const [summary, setSummary] = useState<string>("");
   const [showSummary, setShowSummary] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
   const [isSummarizing, setIsSummarizing] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [currentModel, setCurrentModel] = useState<string>(model2);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,7 +59,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         const summaryText = await summarizeChat(currentMessages);
         setSummary(summaryText);
         setShowSummary(true);
-        setAnchorEl(messagesEndRef.current);
       } catch (error) {
         console.error("Error getting summary:", error);
       } finally {
@@ -67,11 +68,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   const generateResponse = async (
-    currentModel: string,
+    model: string,
     currentMessages: Message[]
   ) => {
     try {
-      const currentCount = messageCountRef.current[currentModel] || 0;
+      const currentCount = messageCountRef.current[model] || 0;
 
       if (currentCount >= MESSAGE_COUNT) {
         setIsConversationActive(false);
@@ -79,10 +80,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         handleConversationEnd(currentMessages);
         return null;
       }
-      const response = await getLLMResponse(currentMessages, currentModel);
+      const response = await getLLMResponse(currentMessages, model);
 
       const newMessage: Message = {
-        model: currentModel,
+        model: model,
         content: response,
       };
 
@@ -92,8 +93,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const newCount = currentCount + 1;
       messageCountRef.current = {
         ...messageCountRef.current,
-        [currentModel]: newCount,
+        [model]: newCount,
       };
+
+      if (updatedMessages) {
+        setCurrentModel(model === model1 ? model2 : model1);
+      }
 
       return updatedMessages;
     } catch (error) {
@@ -110,33 +115,34 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const startConversation = async () => {
     const initialMessage: Message = {
       model: model1,
-      content: `Let's debate this: ${topic}`,
+      content: topic,
     };
 
     setIsConversationActive(true);
     isActiveRef.current = true;
     setMessages([initialMessage]);
+    setCurrentModel(model2);
 
     messageCountRef.current = {
       [model1]: 1,
       [model2]: 0,
     };
 
-    let currentModel = model2;
     let currentMessages = [initialMessage];
+    let model = model2;
 
     setIsLoading(true);
     while (isActiveRef.current) {
-      const updatedMessages = await generateResponse(
-        currentModel,
-        currentMessages
-      );
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-
+      const updatedMessages = await generateResponse(model, currentMessages);
       if (!updatedMessages) break;
 
       currentMessages = updatedMessages;
-      currentModel = currentModel === model1 ? model2 : model1;
+      model = model === model1 ? model2 : model1;
+      setCurrentModel(model);
+
+      if (isActiveRef.current) {
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+      }
     }
   };
 
@@ -148,7 +154,39 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   const handleCloseSummary = () => {
     setShowSummary(false);
-    setAnchorEl(null);
+  };
+
+  const handlePauseResume = () => {
+    if (isPaused) {
+      setIsPaused(false);
+      isActiveRef.current = true;
+      continueConversation(currentModel, messages);
+    } else {
+      setIsPaused(true);
+      isActiveRef.current = false;
+    }
+  };
+
+  const continueConversation = async (
+    model: string,
+    currentMessages: Message[]
+  ) => {
+    let localModel = model;
+    let msgs = currentMessages;
+
+    setIsLoading(true);
+    while (isActiveRef.current) {
+      const updatedMessages = await generateResponse(localModel, msgs);
+      if (!updatedMessages) break;
+
+      msgs = updatedMessages;
+      localModel = localModel === model1 ? model2 : model1;
+      setCurrentModel(localModel);
+
+      if (isActiveRef.current) {
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+      }
+    }
   };
 
   return (
@@ -168,7 +206,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           onClick={startConversation}
           disabled={!canStartConversation}
         >
-          {isLoading ? "Conversing..." : "Start Conversation"}
+          Start
+        </Button>
+        <Button
+          variant="contained"
+          color="warning"
+          startIcon={isPaused ? <PlayArrowIcon /> : <PauseIcon />}
+          onClick={handlePauseResume}
+          disabled={!isConversationActive || isLoading}
+        >
+          {isPaused ? "Resume" : "Pause"}
         </Button>
         <Button
           variant="contained"
@@ -177,7 +224,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           onClick={handleStopConversation}
           disabled={!isConversationActive}
         >
-          Stop Conversation
+          End
         </Button>
       </Box>
       <Box sx={{ flexGrow: 1, overflow: "auto" }}>
@@ -233,7 +280,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             <CloseIcon />
           </IconButton>
           <Typography variant="h6" gutterBottom>
-            Debate Summary
+            Summary
           </Typography>
           <Divider sx={{ my: 1 }} />
           {isSummarizing ? (
