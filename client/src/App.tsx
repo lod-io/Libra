@@ -31,7 +31,10 @@ const darkTheme = createTheme({
 function App() {
   const [model1, setModel1] = useState("");
   const [model2, setModel2] = useState("");
-  const [topic, setTopic] = useState<Topic>(TOPICS[0]);
+  const [topic, setTopic] = useState<Topic>({
+    kind: "",
+    content: "",
+  });
   const [customTopicInput, setCustomTopicInput] = useState<Topic>({
     kind: "custom",
     content: "",
@@ -51,11 +54,10 @@ function App() {
         randomIndex2 = Math.floor(Math.random() * models.length);
       } while (randomIndex2 === randomIndex1);
       const randomModel2 = models[randomIndex2];
-
       const randomTopic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
+      setTopic(randomTopic);
       setModel1(randomModel1);
       setModel2(randomModel2);
-      setTopic(randomTopic);
     };
     fetchModels();
   }, []);

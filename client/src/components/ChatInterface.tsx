@@ -58,7 +58,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }, [messages]);
 
   const canStartConversation =
-    model1 && model2 && topic && !isConversationActive && !isLoading;
+    model1 &&
+    model2 &&
+    topic &&
+    !isConversationActive &&
+    !isLoading &&
+    !isSummarizing;
 
   const handleConversationEnd = async (currentMessages: Message[]) => {
     if (currentMessages.length > 1) {
@@ -215,34 +220,38 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         overflow: "hidden",
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mb: 2 }}>
-        <Button
-          variant="contained"
-          color="success"
-          startIcon={<PlayArrowIcon />}
-          onClick={startConversation}
-          disabled={!canStartConversation}
+      <Box>
+        <Box
+          sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mb: 2 }}
         >
-          Start
-        </Button>
-        <Button
-          variant="contained"
-          color="warning"
-          startIcon={isPaused ? <PlayArrowIcon /> : <PauseIcon />}
-          onClick={handlePauseResume}
-          disabled={!isConversationActive || isLoading}
-        >
-          {isPaused ? "Resume" : "Pause"}
-        </Button>
-        <Button
-          variant="contained"
-          color="error"
-          startIcon={<StopIcon />}
-          onClick={handleStopConversation}
-          disabled={!isConversationActive}
-        >
-          End
-        </Button>
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<PlayArrowIcon />}
+            onClick={startConversation}
+            disabled={!canStartConversation}
+          >
+            Start
+          </Button>
+          <Button
+            variant="contained"
+            color="warning"
+            startIcon={isPaused ? <PlayArrowIcon /> : <PauseIcon />}
+            onClick={handlePauseResume}
+            disabled={!isConversationActive || isLoading || isSummarizing}
+          >
+            {isPaused ? "Resume" : "Pause"}
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<StopIcon />}
+            onClick={handleStopConversation}
+            disabled={!isConversationActive || isSummarizing}
+          >
+            End
+          </Button>
+        </Box>
       </Box>
       <Box sx={{ flexGrow: 1, overflow: "auto" }}>
         {messages.map((message, index) => (
@@ -276,6 +285,41 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         ))}
         <div ref={messagesEndRef} />
       </Box>
+      <Popover
+        open={isSummarizing}
+        anchorEl={document.body}
+        anchorOrigin={{
+          vertical: "center",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "center",
+          horizontal: "center",
+        }}
+        slotProps={{
+          paper: {
+            elevation: 4,
+            sx: {
+              bgcolor: "background.paper",
+              borderRadius: 1,
+            },
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            p: 3,
+          }}
+        >
+          <CircularProgress size={24} />
+          <Typography variant="body1">
+            Generating conversation summary...
+          </Typography>
+        </Box>
+      </Popover>
       <Popover
         open={showSummary && Boolean(summaryAnchorEl)}
         anchorEl={summaryAnchorEl}
