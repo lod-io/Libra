@@ -16,10 +16,11 @@ import {
   AccordionDetails,
 } from "@mui/material";
 import ChatInterface from "./components/ChatInterface";
-import { MODEL_OPTIONS, TOPICS, DEFAULT_SYSTEM_PROMPT } from "./constants";
+import { TOPICS, DEFAULT_SYSTEM_PROMPT } from "./constants";
 import { Topic } from "./types";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { SelectChangeEvent } from "@mui/material";
+import { getAvailableModels } from "./services/api";
 
 const darkTheme = createTheme({
   palette: {
@@ -36,21 +37,27 @@ function App() {
     content: "",
   });
   const [systemPrompt, setSystemPrompt] = useState(DEFAULT_SYSTEM_PROMPT);
+  const [models, setModels] = useState<string[]>([]);
 
   useEffect(() => {
-    const randomIndex1 = Math.floor(Math.random() * MODEL_OPTIONS.length);
-    const randomModel1 = MODEL_OPTIONS[randomIndex1].value;
+    const fetchModels = async () => {
+      const models = await getAvailableModels();
+      setModels(models);
+      const randomIndex1 = Math.floor(Math.random() * models.length);
+      const randomModel1 = models[randomIndex1];
 
-    let randomIndex2;
-    do {
-      randomIndex2 = Math.floor(Math.random() * MODEL_OPTIONS.length);
-    } while (randomIndex2 === randomIndex1);
-    const randomModel2 = MODEL_OPTIONS[randomIndex2].value;
+      let randomIndex2;
+      do {
+        randomIndex2 = Math.floor(Math.random() * models.length);
+      } while (randomIndex2 === randomIndex1);
+      const randomModel2 = models[randomIndex2];
 
-    const randomTopic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
-    setModel1(randomModel1);
-    setModel2(randomModel2);
-    setTopic(randomTopic);
+      const randomTopic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
+      setModel1(randomModel1);
+      setModel2(randomModel2);
+      setTopic(randomTopic);
+    };
+    fetchModels();
   }, []);
 
   const handleModel1Change = (value: string) => {
@@ -169,13 +176,13 @@ function App() {
                   label="Left Model"
                   onChange={(e) => handleModel1Change(e.target.value)}
                 >
-                  {MODEL_OPTIONS.map((model) => (
+                  {models.map((model) => (
                     <MenuItem
-                      key={model.value}
-                      value={model.value}
-                      disabled={model.value === model2}
+                      key={model}
+                      value={model}
+                      disabled={model === model2}
                     >
-                      {model.name}
+                      {model}
                     </MenuItem>
                   ))}
                 </Select>
@@ -188,13 +195,13 @@ function App() {
                   label="Right Model"
                   onChange={(e) => handleModel2Change(e.target.value)}
                 >
-                  {MODEL_OPTIONS.map((model) => (
+                  {models.map((model) => (
                     <MenuItem
-                      key={model.value}
-                      value={model.value}
-                      disabled={model.value === model1}
+                      key={model}
+                      value={model}
+                      disabled={model === model1}
                     >
-                      {model.name}
+                      {model}
                     </MenuItem>
                   ))}
                 </Select>

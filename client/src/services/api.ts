@@ -1,4 +1,4 @@
-import { Message, ChatResponse } from "../types";
+import { Message, ChatResponse, ModelResponse } from "../types";
 
 export const getLLMResponse = async (
   messages: Message[],
@@ -17,7 +17,7 @@ export const getLLMResponse = async (
         system_prompt,
     };
 
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/chat/respond`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/respond`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -40,7 +40,7 @@ export const summarizeChat = async (
   messages: Message[]
 ): Promise<string> => {
   try {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/chat/summarize`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/summarize`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -64,3 +64,9 @@ export const summarizeChat = async (
     throw error;
   }
 }; 
+
+export const getAvailableModels = async (): Promise<string[]> => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/models`);
+  const data: ModelResponse = await response.json();
+  return data.models;
+};

@@ -26,3 +26,7 @@ export interface Topic {
   kind: string;
   content: string;
 }
+
+export interface ModelResponse {
+  models: string[];
+}

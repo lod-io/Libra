@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.handlers import chat
+from . import handlers
 
 api_router = APIRouter()
-api_router.include_router(chat.router, prefix="/chat", tags=["chat"])
+api_router.include_router(handlers.router, prefix="/chat", tags=["chat"])

@@ -1,8 +1,7 @@
-from app.models.chat import ChatRequest, ChatResponse, Message, SummaryRequest
-from app.services.llm import LLMService
-from app.dependencies import get_llm_service
+from .models import ChatRequest, ChatResponse, SummaryRequest, ModelResponse
+from .services import LLMService
+from .dependencies import get_llm_service
 from fastapi import APIRouter, Depends, HTTPException
-from typing import List
 
 router = APIRouter()
 
@@ -27,5 +26,16 @@ async def summarize(
     try:
         summary = await llm_service.summarize_chat(request.messages, request.kind)
         return ChatResponse(content=summary)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/models", response_model=ModelResponse)
+async def get_models(
+    llm_service: LLMService = Depends(get_llm_service),
+) -> ModelResponse:
+    try:
+        models = await llm_service.get_available_models()
+        return ModelResponse(models=models)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

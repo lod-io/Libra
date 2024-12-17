@@ -1,21 +1,5 @@
 import { ModelOption, Topic } from "./types";
 
-export const MODEL_OPTIONS: ModelOption[] = [
-    { name: "Claude 3 Haiku", value: "claude-3-haiku-20240307" }, // Good
-    { name: "Claude 3 Opus", value: "claude-3-opus-latest" }, // Someimes delays
-    { name: "Claude 3.5 Sonnet", value: "claude-3-5-sonnet-latest" }, // Sometimes delays
-    { name: "Gemini 1.5 Flash", value: "gemini-1.5-flash" }, // Good
-    { name: "Gemini 1.5 Flash 8B", value: "gemini-1.5-flash-8b" }, // Good
-    { name: "GPT-4o", value: "gpt-4o" }, // Good
-    { name: "GPT-4 Turbo", value: "gpt-4-turbo" }, // Good
-    { name: "GPT-4o Mini", value: "gpt-4o-mini" }, // Good
-    { name: "Llama 3.1 8B Instruct", value: "Meta-Llama-3.1-8B-Instruct" }, // Good
-    { name: "Llama 3.1 8B Instant", value: "llama-3.1-8b-instant" }, // Good
-    { name: "Llama 3.1 70B Instruct", value: "Meta-Llama-3.1-70B-Instruct" }, // Good
-    { name: "Llama 3.1 70B Instruct Turbo", value: "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo" }, // Good
-    { name: "Llama 3.1 405B Instruct Turbo", value: "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo" }, // Good
-];
-
 export const TOPICS: Topic[] = [
     { kind: 'scenario', content: "Let's plan a new world order led by AI." },
     { kind: 'debate', content: "Who wins in a fight: Vegans or NFT enthusiasts?" },

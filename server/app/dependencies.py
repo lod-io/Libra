@@ -1,5 +1,5 @@
 from functools import lru_cache
-from app.services.llm import LLMService
+from .services import LLMService
 
 
 @lru_cache()

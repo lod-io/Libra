@@ -20,3 +20,7 @@ class ChatResponse(BaseModel):
 class SummaryRequest(BaseModel):
     kind: str
     messages: List[Message]
+
+
+class ModelResponse(BaseModel):
+    models: List[str]

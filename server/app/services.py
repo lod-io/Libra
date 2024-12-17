@@ -1,10 +1,10 @@
 import logging
 from typing import List
-from app.models.chat import Message
+from .models import Message
 import os
 import openai
 from dotenv import load_dotenv
-
+import aiohttp
 logger = logging.getLogger(__name__)
 
 load_dotenv()
@@ -13,9 +13,11 @@ load_dotenv()
 class LLMService:
     def __init__(self):
 
+        self.base_url = "https://api.clod.io/v1"
+
         self.client = openai.Client(
             api_key=os.getenv("CLOD_API_KEY"),
-            base_url="https://api.clod.io/v1",
+            base_url=self.base_url,
         )
 
     async def respond(self, messages: List[Message], model: str, system_prompt: str) -> str:
@@ -79,3 +81,19 @@ class LLMService:
         except Exception as e:
             error_msg = f"Error summarizing chat: {str(e)}"
             return error_msg
+
+    async def get_available_models(self) -> List[str]:
+        try:
+            async with aiohttp.ClientSession() as session:
+                headers = {"Authorization": f"Bearer {
+                    os.getenv('CLOD_API_KEY')}"}
+                async with session.get(f"{self.base_url}/providers/models", headers=headers) as response:
+                    if response.status != 200:
+                        raise Exception(f"Failed to fetch models: {
+                                        response.status}")
+
+                    data = await response.json()
+                    return [model["nameInProvider"] for model in data]
+        except Exception as e:
+            logger.error(f"Error fetching models: {str(e)}")
+            raise e

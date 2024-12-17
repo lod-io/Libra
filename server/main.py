@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from app.routes import api_router
+from app.handlers import router
 
 app = FastAPI(
     title="Libra"
@@ -24,7 +24,7 @@ app.add_middleware(
     expose_headers=["Content-Type"]
 )
 
-app.include_router(api_router)
+app.include_router(router)
 
 if __name__ == "__main__":
     import uvicorn
