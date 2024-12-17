@@ -89,8 +89,8 @@ class LLMService:
                     os.getenv('CLOD_API_KEY')}'''}
                 async with session.get(f"{self.base_url}/providers/models", headers=headers) as response:
                     if response.status != 200:
-                        raise Exception(f"Failed to fetch models: {
-                                        response.status}")
+                        raise Exception(f'''Failed to fetch models: {
+                                        response.status}''')
 
                     data = await response.json()
                     return [model["nameInProvider"] for model in data]
