@@ -108,7 +108,7 @@ function App() {
                   <MenuItem value="custom">Custom</MenuItem>
                   {TOPICS.map((t) => (
                     <MenuItem key={t} value={t}>
-                      {t}
+                      {t.length > 90 ? t.substring(0, 90) + "..." : t}
                     </MenuItem>
                   ))}
                 </Select>
@@ -128,10 +128,10 @@ function App() {
             </Box>
             <Box sx={{ display: "flex", flexDirection: "row", gap: 2, mb: 2 }}>
               <FormControl fullWidth>
-                <InputLabel>Team Blue</InputLabel>
+                <InputLabel>Left Model</InputLabel>
                 <Select
                   value={model1}
-                  label="Team Blue"
+                  label="Left Model"
                   onChange={(e) => handleModel1Change(e.target.value)}
                 >
                   {MODEL_OPTIONS.map((model) => (
@@ -147,10 +147,10 @@ function App() {
               </FormControl>
 
               <FormControl fullWidth>
-                <InputLabel>Team Purple</InputLabel>
+                <InputLabel>Right Model</InputLabel>
                 <Select
                   value={model2}
-                  label="Team Purple"
+                  label="Right Model"
                   onChange={(e) => handleModel2Change(e.target.value)}
                 >
                   {MODEL_OPTIONS.map((model) => (
