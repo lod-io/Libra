@@ -132,6 +132,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   const startConversation = async () => {
+    if (isPaused) {
+      setIsPaused(false);
+    }
+
     const initialMessage: Message = {
       model: model1,
       content: topic.content,
@@ -166,6 +170,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   const handleStopConversation = () => {
+    if (isPaused) {
+      setIsPaused(false);
+    }
     setIsConversationActive(false);
     isActiveRef.current = false;
     handleConversationEnd(messages);

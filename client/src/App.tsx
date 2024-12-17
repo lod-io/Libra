@@ -43,6 +43,8 @@ function App() {
   const [models, setModels] = useState<string[]>([]);
 
   useEffect(() => {
+    const randomTopic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
+    setTopic(randomTopic);
     const fetchModels = async () => {
       const models = await getAvailableModels();
       setModels(models);
@@ -54,8 +56,6 @@ function App() {
         randomIndex2 = Math.floor(Math.random() * models.length);
       } while (randomIndex2 === randomIndex1);
       const randomModel2 = models[randomIndex2];
-      const randomTopic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
-      setTopic(randomTopic);
       setModel1(randomModel1);
       setModel2(randomModel2);
     };
@@ -135,96 +135,96 @@ function App() {
             Libra
           </Typography>
 
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-              <FormControl fullWidth>
-                <InputLabel>Topic</InputLabel>
-                <Select
-                  value={topic.kind === "custom" ? "custom" : topic.content}
-                  label="Topic"
-                  onChange={handleTopicChange}
-                >
-                  <MenuItem value="custom">Custom</MenuItem>
-                  {TOPICS.map((topic, index) => (
-                    <MenuItem
-                      key={`${topic.kind}-${index}`}
-                      value={topic.content}
-                    >
-                      {topic.content.length > 90
-                        ? topic.content.substring(0, 90) + "..."
-                        : topic.content}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+          <Box sx={{ display: "flex", flexDirection: "row", gap: 2, mb: 2 }}>
+            <FormControl fullWidth>
+              <InputLabel>Topic</InputLabel>
+              <Select
+                value={topic.kind === "custom" ? "custom" : topic.content}
+                label="Topic"
+                onChange={handleTopicChange}
+              >
+                <MenuItem value="custom">Custom</MenuItem>
+                {TOPICS.map((topic, index) => (
+                  <MenuItem
+                    key={`${topic.kind}-${index}`}
+                    value={topic.content}
+                  >
+                    {topic.content.length > 90
+                      ? topic.content.substring(0, 90) + "..."
+                      : topic.content}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-              {topic.kind === "custom" && (
-                <TextField
-                  fullWidth
-                  label="Custom Topic"
-                  variant="outlined"
-                  value={customTopicInput.content}
-                  onChange={handleCustomTopicChange}
-                  onKeyDown={handleCustomTopicSubmit}
-                  placeholder="Enter custom topic"
-                />
-              )}
-            </Box>
-            <Box sx={{ display: "flex", flexDirection: "row", gap: 2, mb: 2 }}>
-              <FormControl fullWidth>
-                <InputLabel>Left Model</InputLabel>
-                <Select
-                  value={model1}
-                  label="Left Model"
-                  onChange={(e) => handleModel1Change(e.target.value)}
-                >
-                  {models.map((model) => (
-                    <MenuItem
-                      key={model}
-                      value={model}
-                      disabled={model === model2}
-                    >
-                      {model}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl fullWidth>
-                <InputLabel>Right Model</InputLabel>
-                <Select
-                  value={model2}
-                  label="Right Model"
-                  onChange={(e) => handleModel2Change(e.target.value)}
-                >
-                  {models.map((model) => (
-                    <MenuItem
-                      key={model}
-                      value={model}
-                      disabled={model === model1}
-                    >
-                      {model}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
+            {topic.kind === "custom" && (
+              <TextField
+                fullWidth
+                label="Custom Topic"
+                variant="outlined"
+                value={customTopicInput.content}
+                onChange={handleCustomTopicChange}
+                onKeyDown={handleCustomTopicSubmit}
+                placeholder="Enter custom topic"
+              />
+            )}
           </Box>
 
           <Accordion sx={{ mb: 2 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Advanced Settings</Typography>
+              <Typography>Settings</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <TextField
-                fullWidth
-                label="System Prompt"
-                variant="outlined"
-                value={systemPrompt}
-                onChange={handleSystemPromptChange}
-                multiline
-                rows={4}
-              />
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+                  <FormControl fullWidth>
+                    <InputLabel>Left Model</InputLabel>
+                    <Select
+                      value={model1}
+                      label="Left Model"
+                      onChange={(e) => handleModel1Change(e.target.value)}
+                    >
+                      {models.map((model) => (
+                        <MenuItem
+                          key={model}
+                          value={model}
+                          disabled={model === model2}
+                        >
+                          {model}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl fullWidth>
+                    <InputLabel>Right Model</InputLabel>
+                    <Select
+                      value={model2}
+                      label="Right Model"
+                      onChange={(e) => handleModel2Change(e.target.value)}
+                    >
+                      {models.map((model) => (
+                        <MenuItem
+                          key={model}
+                          value={model}
+                          disabled={model === model1}
+                        >
+                          {model}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+                <TextField
+                  fullWidth
+                  label="System Prompt"
+                  variant="outlined"
+                  value={systemPrompt}
+                  onChange={handleSystemPromptChange}
+                  multiline
+                  rows={4}
+                />
+              </Box>
             </AccordionDetails>
           </Accordion>
 

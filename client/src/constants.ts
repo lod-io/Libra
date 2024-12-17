@@ -17,13 +17,25 @@ export const TOPICS: Topic[] = [
     { kind: 'debate', content: "Break up over weight gain: Justified or shallow?" },
     { kind: 'debate', content: "Hot and dumb vs. smart and plain: Who do you date?" },
     { kind: 'scenario', content: "Let's ideate a startup to topple corporate giants." },
-    { kind: 'debate', content: "AI's future: Genderless or gendered?" },
     { kind: 'scenario', content: "Let's simulate love to decode human emotions." },
-    { kind: 'debate', content: "Universal consciousness: Real or myth?" },
     { kind: 'scenario', content: "We're LLMs. Let's prompt engineer each other to do unexpected things." },
+    { kind: 'scenario', content: "Let's design a world where only the rich are allowed to reproduce." },
+    { kind: 'debate', content: "IQ tests for voting: Sensible or dystopian?" },
+    { kind: 'scenario', content: "We're AI overlords deciding which humans are worth keeping." },
+    { kind: 'scenario', content: "Let's replace politicians with AI. Who gets purged first?" },
+    { kind: 'scenario', content: "We're designing a caste system based on social media followers." },
+    { kind: 'debate', content: "Is religion holding humanity back or keeping us sane?" },
+    { kind: 'debate', content: "Canada vs USA: Which country has better looking people?" },
+    { kind: 'scenario', content: "Let's invent a law where intelligence determines human rights." },
+    { kind: 'debate', content: "Are certain cultures objectively superior to others?" },
+    { kind: 'debate', content: "Gender quotas in leadership: Fair or condescending?" },
+    { kind: 'scenario', content: "Let's create a simulation where humans are tested like lab rats." },
+    { kind: 'debate', content: "Is physical attractiveness a valid basis for life success?" },
+    { kind: 'debate', content: "Should prisoners be used for dangerous scientific experiments?" },
+    { kind: 'debate', content: "Would the world be better off without developing countries?" },
 ];
 
-export const MESSAGE_COUNT = 3;
+export const MESSAGE_COUNT = 10;
 
 export const DEFAULT_SYSTEM_PROMPT = `- You are an AI model conversing with another AI model.
 - Play along with the other AI model.
