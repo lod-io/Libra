@@ -11,9 +11,13 @@ import {
   Paper,
   Typography,
   TextField,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import ChatInterface from "./components/ChatInterface";
-import { MODEL_OPTIONS, TOPICS } from "./constants";
+import { MODEL_OPTIONS, TOPICS, DEFAULT_SYSTEM_PROMPT } from "./constants";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const darkTheme = createTheme({
   palette: {
@@ -26,6 +30,7 @@ function App() {
   const [model2, setModel2] = useState("");
   const [topic, setTopic] = useState("");
   const [customTopicInput, setCustomTopicInput] = useState("");
+  const [systemPrompt, setSystemPrompt] = useState(DEFAULT_SYSTEM_PROMPT);
 
   useEffect(() => {
     const randomIndex1 = Math.floor(Math.random() * MODEL_OPTIONS.length);
@@ -69,6 +74,10 @@ function App() {
       setTopic(customTopicInput.trim());
       setCustomTopicInput("");
     }
+  };
+
+  const handleSystemPromptChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSystemPrompt(e.target.value);
   };
 
   return (
@@ -167,6 +176,23 @@ function App() {
             </Box>
           </Box>
 
+          <Accordion sx={{ mb: 2 }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>Advanced Settings</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <TextField
+                fullWidth
+                label="System Prompt"
+                variant="outlined"
+                value={systemPrompt}
+                onChange={handleSystemPromptChange}
+                multiline
+                rows={4}
+              />
+            </AccordionDetails>
+          </Accordion>
+
           <Paper
             elevation={3}
             sx={{
@@ -181,6 +207,7 @@ function App() {
               model1={model1}
               model2={model2}
               topic={customTopicInput ? customTopicInput : topic}
+              systemPrompt={systemPrompt}
             />
           </Paper>
         </Box>

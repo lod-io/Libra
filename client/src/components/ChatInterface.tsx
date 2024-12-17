@@ -22,12 +22,14 @@ interface ChatInterfaceProps {
   model1: string;
   model2: string;
   topic: string;
+  systemPrompt: string;
 }
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({
   model1,
   model2,
   topic,
+  systemPrompt,
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isConversationActive, setIsConversationActive] = useState(false);
@@ -80,7 +82,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         handleConversationEnd(currentMessages);
         return null;
       }
-      const response = await getLLMResponse(currentMessages, model);
+      const response = await getLLMResponse(
+        currentMessages,
+        model,
+        systemPrompt
+      );
 
       const newMessage: Message = {
         model: model,
@@ -182,10 +188,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       msgs = updatedMessages;
       localModel = localModel === model1 ? model2 : model1;
       setCurrentModel(localModel);
-
-      if (isActiveRef.current) {
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-      }
     }
   };
 

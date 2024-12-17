@@ -13,7 +13,7 @@ async def respond(
     llm_service: LLMService = Depends(get_llm_service),
 ) -> ChatResponse:
     try:
-        content = await llm_service.respond(request.messages, request.model)
+        content = await llm_service.respond(request.messages, request.model, request.system_prompt)
         return ChatResponse(content=content)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

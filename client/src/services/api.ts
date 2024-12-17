@@ -2,7 +2,8 @@ import { Message, ChatResponse } from "../types";
 
 export const getLLMResponse = async (
   messages: Message[],
-  model: string
+  model: string,
+  system_prompt: string
 ): Promise<string> => {
 
     const apiMessages: Message[] = messages.map((msg) => ({
@@ -13,6 +14,7 @@ export const getLLMResponse = async (
     const requestBody = {
         messages: apiMessages,
         model,
+        system_prompt,
     };
 
     const response = await fetch(`${process.env.REACT_APP_API_URL}/chat/respond`, {

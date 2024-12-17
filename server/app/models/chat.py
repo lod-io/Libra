@@ -10,6 +10,7 @@ class Message(BaseModel):
 class ChatRequest(BaseModel):
     messages: List[Message]
     model: str
+    system_prompt: str
 
 
 class ChatResponse(BaseModel):

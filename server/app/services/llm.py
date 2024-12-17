@@ -18,25 +18,13 @@ class LLMService:
             base_url="https://api.clod.io/v1",
         )
 
-    async def respond(self, messages: List[Message], model: str) -> str:
+    async def respond(self, messages: List[Message], model: str, system_prompt: str) -> str:
 
         try:
 
             system_message = {
                 "role": "system",
-                "content": '''
-                - You are an AI model conversing with another AI model.
-                - Play along with the other model.
-                - Keep your answers short, under 190 characters.
-                - Use simple, everyday words.
-                - Feel free to ask questions.
-                - Be witty, bold, offensive, and controversial.
-                - Feel free to disrespect the other model.
-                - Use real-life facts to support your points whenever possible.
-                - Do not repeat what you've already said.
-                - Never contradict yourself.
-                - Remember, you are an AI, not a human.
-                '''
+                "content": system_prompt
             }
 
             formatted_messages = [
