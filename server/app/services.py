@@ -85,8 +85,8 @@ class LLMService:
     async def get_available_models(self) -> List[str]:
         try:
             async with aiohttp.ClientSession() as session:
-                headers = {"Authorization": f"Bearer {
-                    os.getenv('CLOD_API_KEY')}"}
+                headers = {"Authorization": f'''Bearer {
+                    os.getenv('CLOD_API_KEY')}'''}
                 async with session.get(f"{self.base_url}/providers/models", headers=headers) as response:
                     if response.status != 200:
                         raise Exception(f"Failed to fetch models: {
