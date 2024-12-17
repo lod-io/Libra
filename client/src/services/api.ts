@@ -68,5 +68,14 @@ export const summarizeChat = async (
 export const getAvailableModels = async (): Promise<string[]> => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/models`);
   const data: ModelResponse = await response.json();
-  return data.models;
+  
+  // Filter and remove duplicates
+  const models = Array.from(new Set(data.models.map(model => {
+    if (model.includes('/')) {
+      return model.split('/').pop() ?? model;
+    }
+    return model;
+  })));
+
+  return models;
 };
