@@ -180,7 +180,7 @@ function App() {
             }}
           >
             <Typography variant="h5" component="h1">
-              Libra: AI Chatrooms
+              Libra: Controversial AI Chats
             </Typography>
             <Box sx={{ display: "flex", gap: 1 }}>
               <IconButton
