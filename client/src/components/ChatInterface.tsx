@@ -163,7 +163,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       setCurrentModel(model);
 
       if (isActiveRef.current) {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     }
   };

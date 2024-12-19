@@ -15,6 +15,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   IconButton,
+  Popover,
 } from "@mui/material";
 import ChatInterface from "./components/ChatInterface";
 import { TOPICS, DEFAULT_SYSTEM_PROMPT } from "./constants";
@@ -26,6 +27,14 @@ import InfoIcon from "@mui/icons-material/Info";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import CloudIcon from "@mui/icons-material/Cloud";
 import ShareIcon from "@mui/icons-material/Share";
+import {
+  TwitterShareButton,
+  LinkedinShareButton,
+  FacebookShareButton,
+  XIcon,
+  LinkedinIcon,
+  FacebookIcon,
+} from "react-share";
 
 const darkTheme = createTheme({
   palette: {
@@ -46,6 +55,8 @@ function App() {
   });
   const [systemPrompt, setSystemPrompt] = useState(DEFAULT_SYSTEM_PROMPT);
   const [models, setModels] = useState<string[]>([]);
+  const [infoAnchorEl, setInfoAnchorEl] = useState<HTMLElement | null>(null);
+  const [shareAnchorEl, setShareAnchorEl] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     const randomTopic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
@@ -77,6 +88,14 @@ function App() {
     if (value !== model1) {
       setModel2(value);
     }
+  };
+
+  const handleGithubClick = () => {
+    window.open("https://github.com/lod-io/Libra", "_blank");
+  };
+
+  const handleCloudClick = () => {
+    window.open("https://clod.io", "_blank");
   };
 
   const handleTopicChange = (event: SelectChangeEvent<string>) => {
@@ -115,6 +134,22 @@ function App() {
     setSystemPrompt(e.target.value);
   };
 
+  const handleInfoClick = (event: React.MouseEvent<HTMLElement>) => {
+    setInfoAnchorEl(event.currentTarget);
+  };
+
+  const handleInfoClose = () => {
+    setInfoAnchorEl(null);
+  };
+
+  const handleShareClick = (event: React.MouseEvent<HTMLElement>) => {
+    setShareAnchorEl(event.currentTarget);
+  };
+
+  const handleShareClose = () => {
+    setShareAnchorEl(null);
+  };
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -148,18 +183,106 @@ function App() {
               Libra: AI Chatrooms
             </Typography>
             <Box sx={{ display: "flex", gap: 1 }}>
-              <IconButton color="inherit" aria-label="description">
+              <IconButton
+                color="inherit"
+                aria-label="description"
+                onClick={handleInfoClick}
+              >
                 <InfoIcon />
               </IconButton>
-              <IconButton color="inherit" aria-label="github">
+              <Popover
+                open={Boolean(infoAnchorEl)}
+                anchorEl={infoAnchorEl}
+                onClose={handleInfoClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+              >
+                <Box sx={{ p: 2, maxWidth: 600 }}>
+                  <Typography variant="body1" gutterBottom>
+                    Welcome to Libra, where AI chats with AI!
+                  </Typography>
+                  <Typography component="ul" sx={{ pl: 2 }}>
+                    <li>🔥 Stir the pot between AI models in real-time</li>
+                    <li>💡 Choose from predefined topics or create your own</li>
+                    <li>🌈 Customize the system prompt</li>
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    We're powered by{" "}
+                    <a
+                      href="https://www.clod.io"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "#00BFFF" }}
+                    >
+                      CLōD
+                    </a>
+                    , an AI inference cloud platform.
+                  </Typography>
+                </Box>
+              </Popover>
+              <IconButton
+                color="inherit"
+                aria-label="github"
+                onClick={handleGithubClick}
+              >
                 <GitHubIcon />
               </IconButton>
-              <IconButton color="inherit" aria-label="cloud">
+              <IconButton
+                color="inherit"
+                aria-label="cloud"
+                onClick={handleCloudClick}
+              >
                 <CloudIcon />
               </IconButton>
-              <IconButton color="inherit" aria-label="share">
+              <IconButton
+                color="inherit"
+                aria-label="share"
+                onClick={handleShareClick}
+              >
                 <ShareIcon />
               </IconButton>
+              <Popover
+                open={Boolean(shareAnchorEl)}
+                anchorEl={shareAnchorEl}
+                onClose={handleShareClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+              >
+                <Box sx={{ p: 1, display: "flex", gap: 1 }}>
+                  <TwitterShareButton
+                    url={window.location.href}
+                    title="Check out Libra - Compare AI Models in Real-time!"
+                  >
+                    <XIcon size={32} round />
+                  </TwitterShareButton>
+                  <LinkedinShareButton
+                    url={window.location.href}
+                    title="Libra - Compare AI Models"
+                    summary="A platform for comparing different AI models in real-time conversation"
+                    source="Libra"
+                  >
+                    <LinkedinIcon size={32} round />
+                  </LinkedinShareButton>
+                  <FacebookShareButton
+                    url={window.location.href}
+                    hashtag="#Libra #AI #Chatrooms"
+                  >
+                    <FacebookIcon size={32} round />
+                  </FacebookShareButton>
+                </Box>
+              </Popover>
             </Box>
           </Box>
 
