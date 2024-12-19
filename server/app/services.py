@@ -38,7 +38,7 @@ class LLMService:
             formatted_messages.insert(0, system_message)
 
             response = self.client.chat.completions.create(
-                model=model,
+                model=model + "@TOKEN_RATE",
                 messages=formatted_messages,
                 temperature=1.0,
             )

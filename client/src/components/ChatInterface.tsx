@@ -43,7 +43,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [currentModel, setCurrentModel] = useState<string>(model2);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [summaryAnchorEl, setSummaryAnchorEl] = useState<HTMLElement | null>(
     null
   );
@@ -164,7 +163,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       setCurrentModel(model);
 
       if (isActiveRef.current) {
-        await new Promise((resolve) => setTimeout(resolve, 2500));
+        await new Promise((resolve) => setTimeout(resolve, 1500));
       }
     }
   };

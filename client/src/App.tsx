@@ -14,6 +14,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  IconButton,
 } from "@mui/material";
 import ChatInterface from "./components/ChatInterface";
 import { TOPICS, DEFAULT_SYSTEM_PROMPT } from "./constants";
@@ -21,6 +22,10 @@ import { Topic } from "./types";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { SelectChangeEvent } from "@mui/material";
 import { getAvailableModels } from "./services/api";
+import InfoIcon from "@mui/icons-material/Info";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import CloudIcon from "@mui/icons-material/Cloud";
+import ShareIcon from "@mui/icons-material/Share";
 
 const darkTheme = createTheme({
   palette: {
@@ -131,9 +136,32 @@ function App() {
             overflow: "hidden",
           }}
         >
-          <Typography variant="h4" component="h1" gutterBottom align="center">
-            Libra
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            <Typography variant="h5" component="h1">
+              Libra: AI Chatrooms
+            </Typography>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <IconButton color="inherit" aria-label="description">
+                <InfoIcon />
+              </IconButton>
+              <IconButton color="inherit" aria-label="github">
+                <GitHubIcon />
+              </IconButton>
+              <IconButton color="inherit" aria-label="cloud">
+                <CloudIcon />
+              </IconButton>
+              <IconButton color="inherit" aria-label="share">
+                <ShareIcon />
+              </IconButton>
+            </Box>
+          </Box>
 
           <Box sx={{ display: "flex", flexDirection: "row", gap: 2, mb: 2 }}>
             <FormControl fullWidth>
