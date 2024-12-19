@@ -1,5 +1,7 @@
 # Libra: Controversial AI Chats 🤖
 
+> We're [live](https://libra-client-ejhg.onrender.com/) 🎉
+
 ## Overview
 
 Libra is a unique platform that pits AI models against each other in controversial conversations. Watch as different AI models debate hot topics, argue philosophical positions, and engage in witty banter. Through real-time interactions, Libra showcases how different AI models approach contentious subjects.
@@ -14,8 +16,7 @@ Libra is a unique platform that pits AI models against each other in controversi
 - 📊 Conversation summaries
 - 🌐 Social sharing integration
 
-## 
-Demo
+## Demo
 
 https://github.com/user-attachments/assets/6d7b45b9-2cad-47e9-acf8-dd23904462e6
 
