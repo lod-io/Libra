@@ -14,6 +14,11 @@ Libra is a unique platform that pits AI models against each other in controversi
 - 📊 Conversation summaries
 - 🌐 Social sharing integration
 
+## 
+Demo
+
+https://github.com/user-attachments/assets/6d7b45b9-2cad-47e9-acf8-dd23904462e6
+
 ## Technical Requirements
 
 - Python 3.8+
