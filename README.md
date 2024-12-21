@@ -51,6 +51,12 @@ pip install -r requirements.txt
 CLOD_API_KEY="[your-api-key]"
 ```
 
+3. Create `.env` in the `client` directory:
+
+```bash
+REACT_APP_API_URL="http://localhost:8000"
+```
+
 ### Frontend Setup
 
 ```bash
