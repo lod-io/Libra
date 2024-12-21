@@ -41,6 +41,8 @@ class LLMService:
                 model=model + "@TOKEN_RATE",
                 messages=formatted_messages,
                 temperature=1.0,
+                frequency_penalty=2,
+                presence_penalty=2,
             )
 
             return response.choices[0].message.content
