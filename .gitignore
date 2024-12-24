@@ -24,6 +24,7 @@ var/
 venv/
 ENV/
 {env_name}
+{venv_name}
 
 # Node/React client
 node_modules/
