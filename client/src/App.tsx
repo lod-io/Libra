@@ -174,6 +174,7 @@ function App() {
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
               alignItems: "center",
               mb: 2,
@@ -300,9 +301,7 @@ function App() {
                     key={`${topic.kind}-${index}`}
                     value={topic.content}
                   >
-                    {topic.content.length > 90
-                      ? topic.content.substring(0, 90) + "..."
-                      : topic.content}
+                    {topic.content}
                   </MenuItem>
                 ))}
               </Select>
